@@ -16,12 +16,23 @@ export interface Token {
   type: TokenType;
 }
 
+const KEYWORDS: Record<string, TokenType> = {
+  let: TokenType.Let,
+};
+
 function token(value = "", type: TokenType): Token {
   return { value, type };
 }
 
 function isalpha(src: string) {
   return src.toUpperCase() !== src.toLowerCase();
+}
+
+function isInt(str: string) {
+  const c = str.charCodeAt(0);
+  const bounds = ["0".charCodeAt(0), "9".charCodeAt(0)];
+
+  return c >= bounds[0] && c <= bounds[1];
 }
 
 export function tokenize(source: string): Token[] {
@@ -46,6 +57,23 @@ export function tokenize(source: string): Token[] {
       tokens.push(token(src.shift(), TokenType.Equals));
     } else {
       // Handle multicharacter tokens
+
+      // build number token
+      if (isInt(src[0])) {
+        let num = "";
+        while (src.length > 0 && isInt(src[0])) {
+          num += src.shift();
+        }
+
+        tokens.push(token(num, TokenType.Number));
+      } else if (isalpha(src[0])) {
+        let ident = "";
+        while (src.length > 0 && isalpha(src[0])) {
+          ident += src.shift();
+        }
+
+        tokens.push(token(ident, TokenType.Identifier));
+      }
     }
   }
   return tokens;
