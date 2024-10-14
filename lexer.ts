@@ -35,6 +35,10 @@ function isInt(str: string) {
   return c >= bounds[0] && c <= bounds[1];
 }
 
+function isSkippable(str: string) {
+  return str === " " || str === "\n" || str === "\t";
+}
+
 export function tokenize(source: string): Token[] {
   const tokens = new Array<Token>();
 
@@ -72,9 +76,28 @@ export function tokenize(source: string): Token[] {
           ident += src.shift();
         }
 
-        tokens.push(token(ident, TokenType.Identifier));
+        //check for reserved keywords
+
+        const reserved = KEYWORDS[ident];
+
+        if (reserved === undefined) {
+          tokens.push(token(ident, TokenType.Identifier));
+        } else {
+          tokens.push(token(ident, reserved));
+        }
+      } else if (isSkippable(src[0])) {
+        src.shift();
+      } else {
+        console.log("Unrecognized character found in source", src[0]);
+        Deno.exit(1);
       }
     }
   }
   return tokens;
+}
+
+const source = await Deno.readTextFile("./test.txt");
+
+for (const token of tokenize(source)) {
+  console.log(token);
 }
