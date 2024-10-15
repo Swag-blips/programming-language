@@ -1,7 +1,7 @@
 export type NodeType =
   | "Program"
   | "NumericLiteral"
-  | "Identifer"
+  | "Identifier"
   | "BinaryExpr";
 
 export interface Stmt {
