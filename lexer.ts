@@ -1,11 +1,12 @@
-enum TokenType {
-  "Number",
-  "Identifier",
-  "Equals",
-  "OpenParen",
-  "CloseParen",
-  "BinaryOperator",
-  "Let",
+export enum TokenType {
+  Number,
+  Identifier,
+  Equals,
+  OpenParen,
+  CloseParen,
+  BinaryOperator,
+  Let,
+  EOF,
 }
 
 export interface Token {
@@ -37,7 +38,7 @@ function token(value = "", type: TokenType): Token {
   return { value, type };
 }
 
-function tokenize(sourcecode: string): Token[] {
+export function tokenize(sourcecode: string): Token[] {
   const tokens = new Array<Token>();
   const src = sourcecode.split("");
 
@@ -87,6 +88,7 @@ function tokenize(sourcecode: string): Token[] {
     }
   }
 
+  tokens.push({ type: TokenType.EOF, value: "EndOfFile" });
   return tokens;
 }
 
